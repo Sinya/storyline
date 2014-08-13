@@ -261,6 +261,7 @@ for i in range(len(news)):
 from heapq import nlargest
 
 # ======================== overlap method 1 =========================================
+print ("overlap method 1")
 
 New_similarity = []
 cross = 0
@@ -294,7 +295,12 @@ while cross < 5: # control how many crosspoints
 
 print (crosspoint)
 
+for point in crosspoint:
+    print ((point[0]/len(news),point[0]%len(news)))
+
+
 # ======================== overlap method 2 =========================================
+print ("overlap method 2")
 
 topk_similarity_m2 = nlargest(100+len(news), enumerate(New_similarity), key=lambda x: x[1])
 crosspoint_m2 = []
@@ -426,8 +432,8 @@ def read_edgelist(nodetype=str):
 def write_edge2cid(e2c,delimiter=","):
     # write edge2cid three-column file
     c2c = dict( (c,i+1) for i,c in enumerate(sorted(list(set(e2c.values())))) ) # ugly...
-    for e,c in sorted(e2c.iteritems(), key=itemgetter(1)):
-        print ( "%s%s%s%s%s\n" % (str(e[0]),delimiter,str(e[1]),delimiter,str(c2c[c])) )
+    # for e,c in sorted(e2c.iteritems(), key=itemgetter(1)):
+        # print ( "%s%s%s%s%s\n" % (str(e[0]),delimiter,str(e[1]),delimiter,str(c2c[c])) )
     
     cid2edges,cid2nodes = defaultdict(set),defaultdict(set) # faster to recreate here than
     for edge,cid in e2c.iteritems():                        # to keep copying all dicts
@@ -438,8 +444,9 @@ def write_edge2cid(e2c,delimiter=","):
     # write list of edges for each comm, each comm on its own line
     for cid in sorted(cid2edges.keys()):
         nodes,edges = map(str,cid2nodes[cid]), ["%s,%s" % (ni,nj) for ni,nj in cid2edges[cid]]
-        print ( " ".join(edges) );
-        print ( " ".join([str(cid)] + nodes) );
+        if (len(edges) == 1):
+            print ( " ".join(edges) )
+        # print ( " ".join([str(cid)] + nodes) );
 
 
 if __name__ == '__main__':
@@ -448,9 +455,9 @@ if __name__ == '__main__':
     adj,edges = read_edgelist()
     
     edge2cid,S_max,D_max,list_D = HLC( adj,edges ).single_linkage()
-    for s,D in list_D:
-        print(s, D)
-    print("# D_max = %f\n# S_max = %f" % (D_max,S_max))
+    # for s,D in list_D:
+    #     print(s, D)
+    # print("# D_max = %f\n# S_max = %f" % (D_max,S_max))
     write_edge2cid( edge2cid )
 
         
