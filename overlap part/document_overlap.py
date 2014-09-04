@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
 
-from sklearn.datasets import fetch_20newsgroups
+from sklearn.cluster import DBSCAN
 from sklearn.decomposition import TruncatedSVD
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import HashingVectorizer
@@ -26,10 +26,6 @@ import jieba
 import chardet
 import jieba.analyse
 import jieba.posseg as pseg
-
-# load text files
-import os
-import chardet
 
 
 # Define News class
@@ -206,17 +202,19 @@ if opts.n_components:
     print()
 
 
-###############################################################################
+#############################################################################
 # Do the actual clustering
 
 if opts.minibatch:
+    print("MiniBatchKMeans")
     km = MiniBatchKMeans(n_clusters=true_k, init='k-means++', n_init=1,
-                         init_size=1000, batch_size=1000, verbose=opts.verbose)
+                         init_size=1000, batch_size=1000, verbose=True)
 else:
-    km = KMeans(n_clusters=true_k, init='k-means++', max_iter=100, n_init=1,
-                verbose=opts.verbose)
-
-
+    # print("KMeans")
+    # km = KMeans(n_clusters=true_k, init='k-means++', max_iter=100, n_init=1,
+    #             verbose=True)
+    print("DBSCAN")
+    km = DBSCAN(eps=0.3, min_samples=10)
 
 print("Clustering sparse data with %s" % km)
 t0 = time()
@@ -255,8 +253,8 @@ for i in range(len(news)):
     news[i].similarity = cosine_similarity(X[i:i+1], X)[0]
     cs = news[i].similarity
 
-# for i in range(len(news)):
-#     print(news[i].number, news[i].title, news[i].time, news[i].category, news[i].url, news[i].similarity)
+for i in range(len(news)):
+    print(news[i].number, news[i].title, news[i].time, news[i].category, news[i].url, news[i].similarity)
 
 from heapq import nlargest
 
